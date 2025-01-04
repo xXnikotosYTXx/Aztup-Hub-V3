@@ -1,0 +1,48 @@
+-- Maid class to manage cleanup
+local Maid = {}
+Maid.__index = Maid
+
+-- Creates a new instance of the Maid
+function Maid.new()
+    local self = setmetatable({}, Maid)
+    self.tasks = {}
+    return self
+end
+
+-- Adds a cleanup task (function) to the Maid
+function Maid:Add(task)
+    table.insert(self.tasks, task)
+end
+
+-- Adds a connection (event) to the Maid, so it can disconnect later
+function Maid:GiveTask(task)
+    if task and task.Disconnect then
+        table.insert(self.tasks, task)
+    elseif task and type(task) == "function" then
+        table.insert(self.tasks, task)
+    end
+end
+
+-- Cleans up all tasks (disconnects events, runs functions)
+function Maid:DoCleaning()
+    for _, task in ipairs(self.tasks) do
+        if typeof(task) == "function" then
+            task()  -- Run the cleanup function
+        elseif task.Disconnect then
+            task:Disconnect()  -- Disconnect events
+        end
+    end
+    self.tasks = {}  -- Clear the task list
+end
+
+-- Removes a specific task from the Maid
+function Maid:Remove(task)
+    for i, t in ipairs(self.tasks) do
+        if t == task then
+            table.remove(self.tasks, i)
+            break
+        end
+    end
+end
+
+return Maid
