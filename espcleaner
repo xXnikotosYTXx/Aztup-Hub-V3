@@ -1,0 +1,33 @@
+-- Модуль для очистки ESP
+
+local ESPCleaner = {}
+
+-- Сохраняем ссылки на все объекты ESP
+ESPCleaner.Objects = {}
+
+-- Функция для добавления объекта в список ESP
+function ESPCleaner:AddObject(espObject)
+    table.insert(self.Objects, espObject)
+end
+
+-- Функция для очистки всех объектов ESP
+function ESPCleaner:Clear()
+    for _, obj in ipairs(self.Objects) do
+        if obj then
+            obj:Destroy()  -- Удаляем объект
+        end
+    end
+    self.Objects = {}  -- Очищаем список объектов
+end
+
+-- Функция для отключения всех объектов ESP
+function ESPCleaner:Disable()
+    for _, obj in ipairs(self.Objects) do
+        if obj then
+            obj.Enabled = false  -- Просто скрываем объекты, если они есть
+        end
+    end
+end
+
+-- Возвращаем модуль
+return ESPCleaner
